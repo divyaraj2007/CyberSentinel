@@ -1,0 +1,43 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Environment variables
+.env
+.env.local
+
+# SQLite database
+*.db
+*.sqlite3
+cybersentinel.db
+
+# Node dependencies and build outputs
+node_modules/
+frontend/node_modules/
+frontend/dist/
+dist/
+
+# Test & coverage caches
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Temporary and upload stores
+uploaded_pcaps/*
+!uploaded_pcaps/.gitkeep
+generated_reports/*
+!generated_reports/.gitkeep
+logs/
+*.log
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
