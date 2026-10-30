@@ -4,7 +4,7 @@
 
 ### 1.1 Accessing the Platform
 Open your browser and navigate to:
-`http://localhost:5173` (or port 80 if running via Docker)
+`http://localhost:5173` (or port 80 if running via Docker, or `http://localhost/cybersentinel` if running via XAMPP)
 
 ### 1.2 Default User Accounts
 CyberSentinel provides four pre-configured role-based user accounts:
@@ -91,3 +91,26 @@ CyberSentinel provides four pre-configured role-based user accounts:
 - Select from 10 comprehensive report types (Executive Assessment, Vulnerability Report, Cisco Audit, etc.).
 - Choose **PDF** or **CSV** format and click **Compile & Export Report**.
 - Download and review the compiled document immediately.
+
+---
+
+## 3. Running with XAMPP (Apache & MySQL)
+
+### 3.1 Architecture in XAMPP
+When running with XAMPP:
+- **Apache (Port 80):** Serves the built frontend from `C:\xampp\htdocs\cybersentinel\` and reverse-proxies API calls and WebSockets to the Python backend.
+- **MySQL / MariaDB (Port 3306):** Optional database managed via phpMyAdmin.
+- **Python FastAPI (Port 8000):** Executes network probing, packet captures, and IDS rules.
+
+### 3.2 Quick Setup
+1. **Enable Apache Proxy in `C:\xampp\apache\conf\httpd.conf`:**
+   ```apache
+   LoadModule proxy_http_module modules/mod_proxy_http.so
+   LoadModule proxy_wstunnel_module modules/mod_proxy_wstunnel.so
+   ```
+2. **Deploy to XAMPP:**
+   Double-click `scripts\deploy_to_xampp.bat`.
+3. **Run the Backend:**
+   Double-click `scripts\run_xampp_backend.bat`.
+4. **Access in Browser:**
+   Navigate to [http://localhost/cybersentinel](http://localhost/cybersentinel).

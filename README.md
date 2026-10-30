@@ -42,7 +42,7 @@ It combines the capabilities of an **NMS** (Network Management System), **SIEM**
 ### Backend
 - **Framework:** Python FastAPI (Async REST API)
 - **Data Validation:** Pydantic v2
-- **ORM & Database:** SQLAlchemy with SQLite (zero-config local dev) and PostgreSQL (Docker)
+- **ORM & Database:** SQLAlchemy with SQLite (zero-config local dev), MySQL / MariaDB (XAMPP), and PostgreSQL (Docker)
 - **Security:** Bcrypt password hashing, PyJWT, OAuth2 Bearer, RBAC
 - **Packet Engine:** Scapy & Python-Nmap
 - **Reporting:** ReportLab PDF Generation & CSV engine
@@ -123,6 +123,47 @@ Open your browser at:
 
 ---
 
+## Running with XAMPP (Apache & MySQL)
+
+CyberSentinel can be hosted directly inside your local **XAMPP** environment (`C:\xampp`), serving the frontend on Apache (port 80) and optionally connecting to XAMPP's MySQL/MariaDB database.
+
+### 1. Enable Apache Proxy in XAMPP (One-time Setup)
+Open `C:\xampp\apache\conf\httpd.conf` and uncomment these two lines (remove the `#`):
+```apache
+LoadModule proxy_http_module modules/mod_proxy_http.so
+LoadModule proxy_wstunnel_module modules/mod_proxy_wstunnel.so
+```
+Then restart Apache in the XAMPP Control Panel.
+
+### 2. (Optional) Connect to XAMPP MySQL Database
+1. Open [http://localhost/phpmyadmin](http://localhost/phpmyadmin) and create a database named `cybersentinel`.
+2. In `.env`, set:
+   ```ini
+   DATABASE_URL="mysql+pymysql://root:@localhost:3306/cybersentinel"
+   ```
+3. Run the seed script:
+   ```bash
+   python backend/app/seed.py
+   ```
+
+### 3. Deploy Frontend to XAMPP
+Run the automated deployment script:
+```bat
+scripts\deploy_to_xampp.bat
+```
+This builds the frontend and copies all assets to `C:\xampp\htdocs\cybersentinel` along with an optimized `.htaccess` for SPA routing and API reverse-proxying.
+
+### 4. Run the Python Backend
+```bat
+scripts\run_xampp_backend.bat
+```
+
+### 5. Access CyberSentinel in XAMPP
+Open your browser at:
+👉 **[http://localhost/cybersentinel](http://localhost/cybersentinel)**
+
+---
+
 ## Docker Deployment
 
 To launch the full production stack (PostgreSQL, Redis, Backend, and Nginx Frontend):
@@ -180,7 +221,10 @@ CyberSentinel/
 │   └── requirements.txt
 ├── docker/                 # Dockerfiles and Nginx configuration
 ├── docs/                   # Architecture, API, and User Guide
-├── scripts/                # Development startup scripts
+├── scripts/                # Development, XAMPP, and launch scripts
+│   ├── run_dev.bat         # Standalone Vite + FastAPI dev launcher
+│   ├── deploy_to_xampp.bat # Deploys frontend to C:\xampp\htdocs\cybersentinel
+│   └── run_xampp_backend.bat # Runs FastAPI backend for XAMPP proxy
 ├── docker-compose.yml
 ├── .env.example
 └── README.md
