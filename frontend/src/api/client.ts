@@ -1,4 +1,9 @@
-const API_BASE = '/api/v1';
+const getApiBase = () => {
+  if (typeof window !== 'undefined' && window.location.pathname.startsWith('/cybersentinel')) {
+    return '/cybersentinel/api/v1';
+  }
+  return '/api/v1';
+};
 
 export class ApiClient {
   private static getToken(): string | null {
@@ -25,7 +30,7 @@ export class ApiClient {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const response = await fetch(`${API_BASE}${endpoint}`, {
+    const response = await fetch(`${getApiBase()}${endpoint}`, {
       ...options,
       headers,
     });
@@ -33,7 +38,8 @@ export class ApiClient {
     if (response.status === 401) {
       this.clearToken();
       if (!window.location.pathname.includes('/login')) {
-        window.location.href = '/login';
+        const loginPath = window.location.pathname.startsWith('/cybersentinel') ? '/cybersentinel/login' : '/login';
+        window.location.href = loginPath;
       }
       throw new Error('Unauthorized');
     }
@@ -53,7 +59,7 @@ export class ApiClient {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const response = await fetch(`${API_BASE}${endpoint}`, {
+    const response = await fetch(`${getApiBase()}${endpoint}`, {
       method: 'POST',
       headers,
       body: formData,

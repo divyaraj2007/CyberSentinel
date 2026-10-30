@@ -32,7 +32,8 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     const connect = () => {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsUrl = `${protocol}//${window.location.host}/api/ws`;
+      const basePath = window.location.pathname.startsWith('/cybersentinel') ? '/cybersentinel' : '';
+      const wsUrl = `${protocol}//${window.location.host}${basePath}/api/ws`;
 
       ws = new WebSocket(wsUrl);
       socketRef.current = ws;
