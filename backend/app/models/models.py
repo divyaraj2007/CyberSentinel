@@ -260,6 +260,10 @@ class CiscoDevice(Base):
     memory_usage = Column(Float, default=0.0) # percentage
     temperature_celsius = Column(Float, default=38.5)
     status = Column(String(20), default="online")
+    device_type = Column(String(50), default="switch") # switch, firewall, router
+    vendor = Column(String(50), default="Cisco") # Cisco, Sophos, HP Aruba, MikroTik, D-Link, Generic
+    location = Column(String(100), default="Main Server Room")
+    extra_data_json = Column(JSON, default=dict)
     last_poll = Column(DateTime, default=utcnow)
 
     interfaces = relationship("CiscoInterface", back_populates="device", cascade="all, delete-orphan")
@@ -286,6 +290,8 @@ class CiscoInterface(Base):
     out_discards = Column(Integer, default=0)
     link_flaps = Column(Integer, default=0)
     utilization_percent = Column(Float, default=0.0)
+    vlan_id = Column(Integer, default=1)
+    port_mode = Column(String(20), default="Access") # Access, Trunk, Routed
 
     device = relationship("CiscoDevice", back_populates="interfaces")
 

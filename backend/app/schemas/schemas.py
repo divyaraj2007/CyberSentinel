@@ -240,7 +240,7 @@ class IncidentOut(BaseModel):
 class CiscoInterfaceOut(BaseModel):
     id: int
     name: str
-    description: Optional[str]
+    description: Optional[str] = None
     admin_status: str
     oper_status: str
     speed_bps: int
@@ -251,6 +251,8 @@ class CiscoInterfaceOut(BaseModel):
     crc_errors: int
     link_flaps: int
     utilization_percent: float
+    vlan_id: Optional[int] = 1
+    port_mode: Optional[str] = "Access"
 
     class Config:
         from_attributes = True
@@ -273,15 +275,36 @@ class CiscoDeviceOut(BaseModel):
     ip_address: str
     model: str
     snmp_version: str
-    sys_descr: Optional[str]
+    sys_descr: Optional[str] = None
     uptime_seconds: int
     cpu_usage: float
     memory_usage: float
     temperature_celsius: float
     status: str
+    device_type: Optional[str] = "switch"
+    vendor: Optional[str] = "Cisco"
+    location: Optional[str] = "Main Data Center"
+    extra_data_json: Optional[Dict[str, Any]] = None
     last_poll: datetime
     interfaces: List[CiscoInterfaceOut] = []
     audit_findings: List[CiscoAuditFindingOut] = []
+
+    class Config:
+        from_attributes = True
+
+class InfrastructureDeviceCreate(BaseModel):
+    hostname: str
+    ip_address: str
+    device_type: str = "switch"  # switch, firewall, router
+    vendor: str = "Cisco"        # Cisco, Sophos, HP Aruba, MikroTik, D-Link, Generic
+    model: str = "Catalyst 2960-24TT"
+    location: Optional[str] = "College Computer Lab"
+    snmp_version: str = "v2c"    # v1, v2c, v3
+    snmp_community: Optional[str] = "public"
+    snmp_port: int = 161
+    port_count: int = 24         # 24 or 48 ports
+    sophos_firmware: Optional[str] = "SFOS 20.0 MR-1"
+    sophos_ha_mode: Optional[str] = "Standalone"
 
     class Config:
         from_attributes = True

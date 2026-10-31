@@ -131,6 +131,8 @@ export interface CiscoInterface {
   crc_errors: number;
   link_flaps: number;
   utilization_percent: number;
+  vlan_id?: number;
+  port_mode?: string;
 }
 
 export interface CiscoAuditFinding {
@@ -155,6 +157,10 @@ export interface CiscoDevice {
   memory_usage: number;
   temperature_celsius: number;
   status: string;
+  device_type?: 'switch' | 'firewall' | 'router';
+  vendor?: string;
+  location?: string;
+  extra_data_json?: Record<string, any>;
   last_poll: string;
   interfaces: CiscoInterface[];
   audit_findings: CiscoAuditFinding[];

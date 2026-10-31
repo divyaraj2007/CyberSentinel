@@ -32,7 +32,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ alertCount = 3 }) => {
     { label: 'Intrusion Detection', path: '/ids', icon: ShieldAlert, badge: alertCount },
     { label: 'Vulnerabilities & CVE', path: '/vulnerabilities', icon: Bug },
     { label: 'Threat Intelligence', path: '/threat-intel', icon: Globe2 },
-    { label: 'Cisco SNMP Monitor', path: '/cisco', icon: Server },
+    { label: 'Switches & Firewalls (NOC)', path: '/cisco', icon: Server },
     { label: 'Network Topology', path: '/topology', icon: GitFork },
     { label: 'Security Alerts', path: '/alerts', icon: AlertTriangle, badge: alertCount },
     { label: 'Incident Management', path: '/incidents', icon: FolderLock },

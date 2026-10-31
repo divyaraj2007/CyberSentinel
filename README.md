@@ -17,7 +17,9 @@ It combines the capabilities of an **NMS** (Network Management System), **SIEM**
 * **Intrusion Detection System:** Suricata rule matching and Zeek behavioral heuristics for SYN floods, ARP spoofing, DNS exfiltration, brute force, and C2 beaconing.
 * **Vulnerability Assessment:** Automated service banner correlation with known CVEs, CVSS 3.1 scoring, and live NIST NVD REST API integration.
 * **Multi-Source Threat Intelligence:** Reputation lookups against VirusTotal, AbuseIPDB, and AlienVault OTX with offline IOC vault caching.
-* **Cisco SNMP Infrastructure Monitoring:** Switch and router telemetry (CPU, memory, temperature, interface bandwidth, CRC errors, link flapping) and configuration hardening audits.
+* **Campus Switches & LibreNMS-Style Chassis View:** Interactive 24-port and 48-port RJ-45 visual patch panels with real-time LED link status, per-port Rx/Tx traffic, CRC frame errors, and custom campus/lab switch addition via SNMPv2c/v3.
+* **Sophos XGS Next-Gen Firewall Monitoring:** Dedicated firewall command center with live concurrent session meters (1M limit), Xstream DPI engine, Sophos ATP C2 botnet blocker, IPS engine, Multi-WAN ISP load balancing, and active VPN tunnel metrics.
+* **Cisco Enterprise Hardening Audits:** Automated inspection against Cisco IOS Hardening Baselines (BPDU Guard, Telnet disabling, weak SNMP string remediation).
 * **Interactive Network Topology:** Visual graph displaying routers, VLAN subnets, endpoints, and highlighted rogue nodes.
 * **Security Alert & Incident Response:** Triage alerts, escalate to incidents, maintain evidence timelines, and generate resolution notes.
 * **Digital Forensics:** PCAP upload, cryptographic SHA-256 integrity verification, packet dissection, and chain-of-custody audit logs.

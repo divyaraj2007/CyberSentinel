@@ -142,11 +142,12 @@ const DEFAULT_TELEMETRY = {
 };
 
 const CRITICAL_ASSETS = [
-  { name: 'Cisco Catalyst 9300 Core Gateway', ip: '192.168.1.1', type: 'Router / Switch', status: 'online', latency: '2.1 ms', cpu: '28%', temp: '38.5°C' },
+  { name: 'Sophos XGS 3300 Perimeter Firewall', ip: '172.16.16.16', type: 'Next-Gen Firewall', status: 'online', latency: '1.4 ms', cpu: '28%', temp: '42.0°C' },
+  { name: 'Cisco Catalyst 9300 Core Switch', ip: '192.168.1.1', type: 'Core Switch', status: 'online', latency: '2.1 ms', cpu: '24%', temp: '38.5°C' },
+  { name: 'College Lab Switch 1 (LibreNMS 24P)', ip: '192.168.10.1', type: 'Campus Switch', status: 'online', latency: '1.9 ms', cpu: '16%', temp: '33.2°C' },
   { name: 'Ubuntu Web Server (Apache 2.4.49)', ip: '192.168.1.10', type: 'Server', status: 'online', latency: '3.4 ms', cpu: '42%', temp: '41.0°C' },
   { name: 'Windows 2022 Domain Controller (DC01)', ip: '192.168.1.20', type: 'Server', status: 'online', latency: '1.8 ms', cpu: '18%', temp: '36.2°C' },
-  { name: 'Enterprise PostgreSQL Cluster', ip: '192.168.1.25', type: 'Server', status: 'online', latency: '1.2 ms', cpu: '24%', temp: '35.0°C' },
-  { name: 'Surveillance IoT Camera #50', ip: '192.168.1.50', type: 'IoT Device', status: 'online', latency: '5.6 ms', cpu: '12%', temp: '34.0°C' },
+  { name: 'Enterprise PostgreSQL Cluster', ip: '192.168.1.25', type: 'Database', status: 'online', latency: '1.2 ms', cpu: '24%', temp: '35.0°C' },
   { name: 'Unauthorized Rogue Hardware (Raspberry Pi)', ip: '192.168.1.105', type: 'Rogue Endpoint', status: 'unauthorized', latency: '8.4 ms', cpu: '88%', temp: '48.0°C' },
 ];
 
