@@ -6,7 +6,7 @@
 Open your browser and navigate to:
 `http://localhost:5173` (or port 80 if running via Docker, or `http://localhost/cybersentinel` if running via XAMPP)
 
-### 1.2 Default User Accounts
+### 1.2 Default User Accounts & Offline Demo Mode
 CyberSentinel provides four pre-configured role-based user accounts:
 
 | Role | Username | Password | Purpose |
@@ -16,7 +16,8 @@ CyberSentinel provides four pre-configured role-based user accounts:
 | **Security Analyst** | `analyst` | `Analyst2026!` | Event monitoring, traffic analysis, alert investigation, reporting |
 | **Viewer** | `viewer` | `Viewer2026!` | Read-only executive dashboards and compliance audit views |
 
-*Tip: Click any quick-role button on the login screen to automatically fill credentials.*
+* **Offline Demo Access**: If the Python backend isn't running yet, click **"OFFLINE DEMO ACCESS"** directly on the login screen to enter the full SOC dashboard immediately with simulated enterprise telemetry.
+* **Live Engine Access**: Run `scripts\run_xampp_backend.bat`, then sign in with any of the credentials above for live network discovery, real Nmap scanning, and real-time packet feeds.
 
 ---
 

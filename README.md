@@ -162,6 +162,24 @@ scripts\run_xampp_backend.bat
 Open your browser at:
 👉 **[http://localhost/cybersentinel](http://localhost/cybersentinel)**
 
+* **Option A: Instant Offline Demo Mode (Zero Backend Needed)**
+  Click **"OFFLINE DEMO ACCESS"** directly on the login screen to explore the full-scale SOC dashboard immediately with pre-loaded mock telemetry and interactive modules.
+* **Option B: Live Security Engine (Real Nmap, Scapy & Telemetry)**
+  Start the backend with `scripts\run_xampp_backend.bat`, then log in with `admin` / `CyberAdmin2026!`.
+
+### 6. Troubleshooting "Failed to fetch" / "Network request failed"
+If you see **"Failed to fetch"** or **"Network request failed"** on the login page or dashboard:
+1. **Ensure the Python Backend is running:**
+   ```powershell
+   cd d:\Project\CyberSentinel
+   .\scripts\run_xampp_backend.bat
+   ```
+   The backend must be listening on `http://127.0.0.1:8000`.
+2. **Verify Apache Proxy Modules:**
+   Ensure `LoadModule proxy_http_module modules/mod_proxy_http.so` is enabled in `C:\xampp\apache\conf\httpd.conf` and restart Apache.
+3. **Use Offline Demo Mode:**
+   If you want to view the UI and modules without starting Python, click **"OFFLINE DEMO ACCESS"** on the login screen.
+
 ---
 
 ## Docker Deployment
