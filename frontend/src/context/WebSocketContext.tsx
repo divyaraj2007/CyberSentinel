@@ -25,53 +25,76 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [activeToasts, setActiveToasts] = useState<ToastAlert[]>([]);
   const [lastAlert, setLastAlert] = useState<SecurityAlert | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
+  const candidateIndexRef = useRef(0);
 
   useEffect(() => {
-    let ws: WebSocket;
-    let reconnectTimeout: any;
+    let ws: WebSocket | null = null;
+    let reconnectTimeout: any = null;
+
+    const getCandidateWsUrls = (): string[] => {
+      const isHttps = window.location.protocol === 'https:';
+      const wsProto = isHttps ? 'wss:' : 'ws:';
+      const isXampp = window.location.pathname.startsWith('/cybersentinel');
+
+      const urls = [];
+      if (isXampp) {
+        urls.push(`${wsProto}//${window.location.host}/cybersentinel/api/ws`);
+      }
+      urls.push(`${wsProto}//${window.location.host}/api/ws`);
+      // Direct backend fallbacks for XAMPP / local dev
+      urls.push(`ws://127.0.0.1:8000/api/ws`);
+      urls.push(`ws://localhost:8000/api/ws`);
+      return Array.from(new Set(urls));
+    };
 
     const connect = () => {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const basePath = window.location.pathname.startsWith('/cybersentinel') ? '/cybersentinel' : '';
-      const wsUrl = `${protocol}//${window.location.host}${basePath}/api/ws`;
+      const candidates = getCandidateWsUrls();
+      const wsUrl = candidates[candidateIndexRef.current % candidates.length];
 
-      ws = new WebSocket(wsUrl);
-      socketRef.current = ws;
+      try {
+        ws = new WebSocket(wsUrl);
+        socketRef.current = ws;
 
-      ws.onopen = () => {
-        setIsConnected(true);
-      };
+        ws.onopen = () => {
+          setIsConnected(true);
+        };
 
-      ws.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          if (data.type === 'NEW_PACKET') {
-            setLivePackets((prev) => [data.packet, ...prev.slice(0, 99)]);
-          } else if (data.type === 'NEW_SECURITY_ALERT') {
-            const alert = data.alert;
-            setLastAlert(alert);
-            const newToast: ToastAlert = {
-              id: alert.alert_id || `toast-${Date.now()}`,
-              title: alert.title,
-              category: alert.category,
-              severity: alert.severity,
-              time: 'Just now',
-            };
-            setActiveToasts((prev) => [newToast, ...prev.slice(0, 4)]);
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data.type === 'NEW_PACKET') {
+              setLivePackets((prev) => [data.packet, ...prev.slice(0, 99)]);
+            } else if (data.type === 'NEW_SECURITY_ALERT') {
+              const alert = data.alert;
+              setLastAlert(alert);
+              const newToast: ToastAlert = {
+                id: alert.alert_id || `toast-${Date.now()}`,
+                title: alert.title,
+                category: alert.category,
+                severity: alert.severity,
+                time: 'Just now',
+              };
+              setActiveToasts((prev) => [newToast, ...prev.slice(0, 4)]);
+            }
+          } catch (e) {
+            // non-json
           }
-        } catch (e) {
-          // non-json or ping
-        }
-      };
+        };
 
-      ws.onclose = () => {
-        setIsConnected(false);
+        ws.onclose = () => {
+          setIsConnected(false);
+          // Try next candidate endpoint if disconnected
+          candidateIndexRef.current += 1;
+          reconnectTimeout = setTimeout(connect, 3000);
+        };
+
+        ws.onerror = () => {
+          ws?.close();
+        };
+      } catch {
+        candidateIndexRef.current += 1;
         reconnectTimeout = setTimeout(connect, 3000);
-      };
-
-      ws.onerror = () => {
-        ws.close();
-      };
+      }
     };
 
     connect();
