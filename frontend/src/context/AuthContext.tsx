@@ -2,11 +2,47 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '../types';
 import { ApiClient } from '../api/client';
 
+export const DEMO_USERS: Record<string, User> = {
+  admin: {
+    id: 1,
+    username: 'admin',
+    email: 'admin@cybersentinel.internal',
+    full_name: 'Lead SOC Administrator',
+    role: 'Super Administrator',
+    permissions: ['*'],
+  },
+  secadmin: {
+    id: 2,
+    username: 'secadmin',
+    email: 'secadmin@cybersentinel.internal',
+    full_name: 'Security Admin',
+    role: 'Security Administrator',
+    permissions: ['networks:read', 'networks:write', 'scans:read', 'scans:write', 'vulns:read', 'vulns:write'],
+  },
+  analyst: {
+    id: 3,
+    username: 'analyst',
+    email: 'analyst@cybersentinel.internal',
+    full_name: 'Threat Analyst',
+    role: 'Security Analyst',
+    permissions: ['alerts:read', 'alerts:write', 'traffic:read'],
+  },
+  viewer: {
+    id: 4,
+    username: 'viewer',
+    email: 'viewer@cybersentinel.internal',
+    full_name: 'Compliance Auditor',
+    role: 'Viewer',
+    permissions: ['read:all'],
+  },
+};
+
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (username: string, password: string, totpCode?: string) => Promise<void>;
+  loginDemo: (username?: string) => void;
   logout: () => void;
   hasRole: (roles: string[]) => boolean;
 }
@@ -30,19 +66,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(false);
   }, []);
 
-  const login = async (username: string, password: string, totpCode?: string) => {
-    const data = await ApiClient.request<{
-      access_token: string;
-      refresh_token: string;
-      user: User;
-    }>('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ username, password, totp_code: totpCode }),
-    });
+  const loginDemo = (username: string = 'admin') => {
+    const userToSet = DEMO_USERS[username.toLowerCase()] || DEMO_USERS.admin;
+    ApiClient.setToken('demo_token_' + Date.now());
+    localStorage.setItem('cybersentinel_user', JSON.stringify(userToSet));
+    setUser(userToSet);
+  };
 
-    ApiClient.setToken(data.access_token);
-    localStorage.setItem('cybersentinel_user', JSON.stringify(data.user));
-    setUser(data.user);
+  const login = async (username: string, password: string, totpCode?: string) => {
+    try {
+      const data = await ApiClient.request<{
+        access_token: string;
+        refresh_token: string;
+        user: User;
+      }>('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ username, password, totp_code: totpCode }),
+      });
+
+      ApiClient.setToken(data.access_token);
+      localStorage.setItem('cybersentinel_user', JSON.stringify(data.user));
+      setUser(data.user);
+    } catch (err: any) {
+      // If user typed recognized demo account credentials and the backend is offline, we can auto-allow or throw
+      throw err;
+    }
   };
 
   const logout = () => {
@@ -63,6 +111,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated: !!user,
         isLoading,
         login,
+        loginDemo,
         logout,
         hasRole,
       }}

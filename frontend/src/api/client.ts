@@ -4,7 +4,6 @@ let activeApiBase: string | null = null;
 
 const getCandidateBases = (): string[] => {
   const isXampp = typeof window !== 'undefined' && window.location.pathname.startsWith('/cybersentinel');
-  const port = typeof window !== 'undefined' ? window.location.port : '';
   
   const candidates: string[] = [];
   
@@ -14,30 +13,30 @@ const getCandidateBases = (): string[] => {
     candidates.push(saved);
   }
 
-  // 2. Environment base
+  // 2. Direct backend ports (fastest and bypasses any Apache proxy issues)
+  candidates.push('http://127.0.0.1:8000/api/v1');
+  candidates.push('http://localhost:8000/api/v1');
+
+  // 3. Environment reverse-proxy base
   if (isXampp) {
     candidates.push('/cybersentinel/api/v1');
   }
   candidates.push('/api/v1');
-
-  // 3. Direct backend ports (bypasses any Apache/XAMPP proxy misconfiguration)
-  candidates.push('http://127.0.0.1:8000/api/v1');
-  candidates.push('http://localhost:8000/api/v1');
 
   // Deduplicate
   return Array.from(new Set(candidates));
 };
 
 export class ApiClient {
-  private static getToken(): string | null {
+  static getToken(): string | null {
     return localStorage.getItem('cybersentinel_token');
   }
 
-  static setToken(token: string) {
+  static setToken(token: string): void {
     localStorage.setItem('cybersentinel_token', token);
   }
 
-  static clearToken() {
+  static clearToken(): void {
     localStorage.removeItem('cybersentinel_token');
     localStorage.removeItem('cybersentinel_user');
   }
@@ -50,7 +49,7 @@ export class ApiClient {
     const token = this.getToken();
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...(options.headers as Record<string, string> || {}),
+      ...(options.headers as Record<string, string>),
     };
 
     if (token) {
@@ -113,12 +112,17 @@ export class ApiClient {
       }
     }
 
+    if (lastError && (lastError.name === 'TypeError' || lastError.message === 'Failed to fetch')) {
+      throw new Error('Backend server is unreachable (http://127.0.0.1:8000). Please start the Python backend.');
+    }
+
     throw lastError || new Error('Backend service unreachable. Please ensure the CyberSentinel backend is running on port 8000.');
   }
 
   static async uploadFile<T>(endpoint: string, formData: FormData): Promise<T> {
     const token = this.getToken();
     const headers: Record<string, string> = {};
+
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
@@ -146,6 +150,6 @@ export class ApiClient {
       }
     }
 
-    throw lastError || new Error('Upload failed');
+    throw lastError || new Error('Upload failed. Please ensure the CyberSentinel backend is running on port 8000.');
   }
 }
