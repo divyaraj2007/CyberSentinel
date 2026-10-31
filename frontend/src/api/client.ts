@@ -13,7 +13,7 @@ const getCandidateBases = (): string[] => {
     candidates.push(saved);
   }
 
-  // 2. Direct backend ports (fastest and bypasses any Apache proxy issues)
+  // 2. Direct backend ports (bypasses any Apache proxy issues)
   candidates.push('http://127.0.0.1:8000/api/v1');
   candidates.push('http://localhost:8000/api/v1');
 
@@ -75,10 +75,13 @@ export class ApiClient {
         }
 
         if (response.status === 401) {
+          // If the user is in Demo Mode, don't kick them out of the dashboard
+          if (token && (token.startsWith('demo_token_') || token.startsWith('demo_session_token_'))) {
+            throw new Error('Unauthorized');
+          }
           this.clearToken();
-          if (!window.location.pathname.includes('/login')) {
-            const loginPath = window.location.pathname.startsWith('/cybersentinel') ? '/cybersentinel/login' : '/login';
-            window.location.href = loginPath;
+          if (typeof window !== 'undefined') {
+            window.location.hash = '#/login';
           }
           throw new Error('Unauthorized');
         }
